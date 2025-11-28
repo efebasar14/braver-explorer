@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Braver Explorer - Keşfetmek Cesaret İster</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        /* Header Styles */
+        .header {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-symbol {
+            font-size: 2.5rem;
+            color: #ff6b35;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 53, 0.3));
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b35, #ff8e53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 107, 53, 0.1);
+            color: #ff6b35;
+        }
+        
+        /* Main Search Container */
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px 40px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-bottom: 50px;
+            font-style: italic;
+        }
+        
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 20px 60px 20px 30px;
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 50px;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        #searchInput::placeholder {
+            color: #a0a0a0;
+        }
+        
+        #searchInput:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #ff6b35, #ff8e53);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+        
+        /* Suggestions */
+        .suggestions {
+            background: rgba(30, 30, 46, 0.95);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 15px;
+            margin-top: 10px;
+            backdrop-filter: blur(20px);
+            display: none;
+            z-index: 1000;
+            position: relative;
+        }
+        
+        .suggestion-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-item:hover {
+            background: rgba(255, 107, 53, 0.1);
+            padding-left: 30px;
+        }
+        
+        /* Results */
+        .results-container {
+            max-width: 800px;
+            margin: 40px auto;
+            text-align: left;
+        }
+        
+        .result-stats {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+        
+        .result-item {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            border-color: rgba(255, 107, 53, 0.3);
+        }
+        
+        .result-url {
+            color: #ff8e53;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .result-title {
+            color: #ffffff;
+            font-size: 20px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 600;
+        }
+        
+        .result-title:hover {
+            color: #ff6b35;
+        }
+        
+        .result-snippet {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 50px 0;
+            padding: 0 20px;
+        }
+        
+        .page-btn {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+        
+        .page-btn.active {
+            background: linear-gradient(45deg, #ff6b35, #ff8e53);
+            border-color: #ff6b35;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0a0a0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 60px;
+        }
+        
+        .motto {
+            font-style: italic;
+            margin-top: 10px;
+            color: #ff8e53;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .hero-section {
+                padding: 40px 20px 20px;
+            }
+            
+            #searchInput {
+                padding: 15px 50px 15px 20px;
+                font-size: 16px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Koç ikonu için özel stil */
+        .ram-icon::before {
+            content: '🐏';
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo-symbol">🐏</div>
+                <div class="logo-text">Braver Explorer</div>
+            </div>
+            <nav class="nav-links">
+                <a href="#">Arama</a>
+                <a href="#">Görseller</a>
+                <a href="#">Haberler</a>
+                <a href="#">Haritalar</a>
+                <a href="#">Daha Fazla</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="search-container">
+                <div class="tagline">"Keşfetmek Cesaret İster"</div>
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Braver Explorer'da keşfet...">
+                    <button class="search-btn" onclick="performSearch()">
+                        <span class="ram-icon">Ara</span>
+                    </button>
+                    <div class="suggestions" id="suggestions"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <div class="results-container" id="resultsContainer">
+                <!-- Arama sonuçları buraya gelecek -->
+            </div>
+            
+            <div class="pagination" id="pagination" style="display: none;"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div>© 2024 Braver Explorer - Her hakkı saklıdır</div>
+        <div class="motto">"Zirvelere ulaşmak için daima ileri!"</div>
+    </footer>
+
+    <script>
+        class BraverExplorer {
+            constructor() {
+                this.currentPage = 1;
+                this.currentQuery = '';
+                this.searchHistory = JSON.parse(localStorage.getItem('braverSearchHistory')) || [];
+                this.init();
+            }
+            
+            init() {
+                const searchInput = document.getElementById('searchInput');
+                
+                // Debounced input
+                let timeout;
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        this.handleInput(e.target.value);
+                    }, 250);
+                });
+                
+                // Enter tuşu
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performSearch();
+                    }
+                });
+                
+                // Search history'dan öneriler
+                this.showSearchHistory();
+            }
+            
+            async handleInput(query) {
+                if (query.length < 2) {
+                    this.showSearchHistory();
+                    return;
+                }
+                
+                try {
+                    // Backend API'den öneriler al
+                    const response = await fetch(`/api/suggest?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    this.showSuggestions(data.suggestions || []);
+                } catch (error) {
+                    // Fallback: Local öneriler
+                    this.showLocalSuggestions(query);
+                }
+            }
+            
+            showSearchHistory() {
+                const container = document.getElementById('suggestions');
+                if (this.searchHistory.length === 0) {
+                    container.style.display = 'none';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="suggestion-item" style="color: #ff6b35; font-weight: bold;">
+                        Son Aramalarınız:
+                    </div>
+                    ${this.searchHistory.slice(0, 5).map(item => `
+                        <div class="suggestion-item" onclick="braverExplorer.selectSuggestion('${item.replace(/'/g, "\\'")}')">
+                            <span class="ram-icon">🐏</span> ${item}
+                        </div>
+                    `).join('')}
+                `;
+                container.style.display = 'block';
+            }
+            
+            showLocalSuggestions(query) {
+                const localSuggestions = [
+                    `${query} nedir?`,
+                    `${query} nasıl yapılır?`,
+                    `${query} haberleri`,
+                    `${query} görseller`,
+                    `${query} hakkında bilgi`
+                ];
+                
+                this.showSuggestions(localSuggestions);
+            }
+            
+            showSuggestions(suggestions) {
+                const container = document.getElementById('suggestions');
+                
+                if (!suggestions || suggestions.length === 0) {
+                    container.style.display = 'none';
+                    return;
+                }
+                
+                container.innerHTML = suggestions.map(suggestion => `
+                    <div class="suggestion-item" onclick="braverExplorer.selectSuggestion('${suggestion.replace(/'/g, "\\'")}')">
+                        <span class="ram-icon">🐏</span> ${this.highlightSuggestion(suggestion, document.getElementById('searchInput').value)}
+                    </div>
+                `).join('');
+                
+                container.style.display = 'block';
+                container.classList.add('fade-in');
+            }
+            
+            highlightSuggestion(suggestion, query) {
+                if (!query) return suggestion;
+                const regex = new RegExp(`(${query})`, 'gi');
+                return suggestion.replace(regex, '<strong style="color: #ff6b35;">$1</strong>');
+            }
+            
+            hideSuggestions() {
+                document.getElementById('suggestions').style.display = 'none';
+            }
+            
+            selectSuggestion(suggestion) {
+                document.getElementById('searchInput').value = suggestion;
+                this.hideSuggestions();
+                this.performSearch();
+            }
+            
+            async performSearch(page = 1) {
+                const query = document.getElementById('searchInput').value.trim();
+                
+                if (!query) return;
+                
+                this.currentQuery = query;
+                this.currentPage = page;
+                
+                // Search history'a ekle
+                this.addToSearchHistory(query);
+                
+                try {
+                    document.getElementById('resultsContainer').innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #a0a0a0;">
+                            <div style="font-size: 3rem; margin-bottom: 20px;">🐏</div>
+                            <div>Braver Explorer "${query}" için keşif yapıyor...</div>
+                        </div>
+                    `;
+                    
+                    // Backend API'ye istek
+                    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&page=${page}`);
+                    const data = await response.json();
+                    
+                    this.displayResults(data);
+                } catch (error) {
+                    console.error('Arama hatası:', error);
+                    // Fallback: Demo sonuçlar göster
+                    this.showDemoResults(query, page);
+                }
+            }
+            
+            addToSearchHistory(query) {
+                this.searchHistory = this.searchHistory.filter(item => item !== query);
+                this.searchHistory.unshift(query);
+                this.searchHistory = this.searchHistory.slice(0, 10);
+                localStorage.setItem('braverSearchHistory', JSON.stringify(this.searchHistory));
+            }
+            
+            displayResults(data) {
+                const container = document.getElementById('resultsContainer');
+                const pagination = document.getElementById('pagination');
+                
+                if (!data.results || data.results.length === 0) {
+                    container.innerHTML = `
+                        <div class="result-item" style="text-align: center;">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">🐏</div>
+                            <h3>"${data.query}" için sonuç bulunamadı</h3>
+                            <p style="margin-top: 15px; color: #a0a0a0;">Koç gibi pes etme, şunları dene:</p>
+                            <ul style="text-align: left; display: inline-block; margin-top: 15px;">
+                                <li>Yazım hatalarını kontrol et</li>
+                                <li>Daha genel anahtar kelimeler dene</li>
+                                <li>Farklı kelimelerle ara</li>
+                                <li>Aramana yeni terimler ekle</li>
+                            </ul>
+                        </div>
+                    `;
+                    pagination.style.display = 'none';
+                    return;
+                }
+                
+                const resultsHTML = `
+                    <div class="result-stats">
+                        "${data.query}" için ${data.total} sonuç bulundu
+                    </div>
+                    ${data.results.map((result, index) => `
+                        <div class="result-item fade-in" style="animation-delay: ${index * 0.1}s">
+                            <div class="result-url">
+                                <span class="ram-icon">🐏</span>
+                                ${this.formatUrl(result.url)}
+                            </div>
+                            <a href="${result.url}" class="result-title">${result.title}</a>
+                            <div class="result-snippet">${this.generateSnippet(result.content, data.query)}</div>
+                        </div>
+                    `).join('')}
+                `;
+                
+                container.innerHTML = resultsHTML;
+                this.showPagination(data.total, this.currentPage);
+            }
+            
+            showDemoResults(query, page) {
+                // Demo sonuçlar - backend hazır olana kadar
+                const demoResults = {
+                    query: query,
+                    total: 42,
+                    results: [
+                        {
+                            url: `https://braverexplorer.com/${query.toLowerCase()}`,
+                            title: `${query} - Braver Explorer'da Keşfedin`,
+                            content: `${query} hakkında kapsamlı bilgiler ve keşif rehberi. Braver Explorer ile ${query} dünyasını keşfedin ve yeni ufuklara yelken açın.`
+                        },
+                        {
+                            url: `https://wiki.example.com/${query.toLowerCase()}`,
+                            title: `${query} Nedir? - Kapsamlı Rehber`,
+                            content: `${query} hakkında detaylı bilgiler, tarihçesi ve kullanım alanları. ${query} ile ilgili merak ettiğiniz her şey burada.`
+                        },
+                        {
+                            url: `https://news.braverexplorer.com/${query.toLowerCase()}`,
+                            title: `${query} Haberleri ve Gelişmeleri`,
+                            content: `${query} ile ilgili en son haberler, gelişmeler ve analizler. Güncel bilgilerle ${query} dünyasını takip edin.`
+                        }
+                    ]
+                };
+                
+                this.displayResults(demoResults);
+            }
+            
+            formatUrl(url) {
+                try {
+                    const urlObj = new URL(url);
+                    return urlObj.hostname.replace('www.', '');
+                } catch {
+                    return url;
+                }
+            }
+            
+            generateSnippet(content, query) {
+                if (!content) return 'Bu sonuç için açıklama mevcut değil.';
+                
+                const words = query.toLowerCase().split(' ');
+                const sentences = content.split('.');
+                
+                for (let sentence of sentences) {
+                    if (words.some(word => sentence.toLowerCase().includes(word))) {
+                        return sentence.substring(0, 160) + '...';
+                    }
+                }
+                
+                return content.substring(0, 160) + '...';
+            }
+            
+            showPagination(totalResults, currentPage) {
+                const totalPages = Math.ceil(totalResults / 10);
+                const pagination = document.getElementById('pagination');
+                
+                if (totalPages <= 1) {
+                    pagination.style.display = 'none';
+                    return;
+                }
+                
+                let paginationHTML = '';
+                
+                if (currentPage > 1) {
+                    paginationHTML += `<button class="page-btn" onclick="braverExplorer.performSearch(${currentPage - 1})">
+                        <span class="ram-icon">🐏</span> Önceki
+                    </button>`;
+                }
+                
+                for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                    paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" 
+                        onclick="braverExplorer.performSearch(${i})">${i}</button>`;
+                }
+                
+                if (currentPage < totalPages) {
+                    paginationHTML += `<button class="page-btn" onclick="braverExplorer.performSearch(${currentPage + 1})">
+                        Sonraki <span class="ram-icon">🐏</span>
+                    </button>`;
+                }
+                
+                pagination.innerHTML = paginationHTML;
+                pagination.style.display = 'flex';
+            }
+        }
+        
+        // Uygulamayı başlat
+        const braverExplorer = new BraverExplorer();
+        
+        // Global fonksiyon
+        function performSearch() {
+            braverExplorer.performSearch();
+        }
+        
+        // Sayfa yüklendiğinde input'a odaklan
+        window.addEventListener('load', () => {
+            document.getElementById('searchInput').focus();
+        });
+    </script>
+</body>
+</html>
