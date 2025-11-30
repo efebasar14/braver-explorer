@@ -72,11 +72,34 @@
             background: rgba(255, 107, 53, 0.1);
             color: #ff6b35;
         }
+
+        .nav-links a.active {
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+        }
+        
+        /* Section Management */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
         
         /* Main Search Container */
         .hero-section {
             text-align: center;
             padding: 80px 20px 40px;
+        }
+
+        .hero-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ff6b35, #ff8e53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .tagline {
@@ -96,7 +119,7 @@
             margin-bottom: 30px;
         }
         
-        #searchInput {
+        #searchInput, #aiChatInput {
             width: 100%;
             padding: 20px 60px 20px 30px;
             font-size: 18px;
@@ -109,17 +132,17 @@
             backdrop-filter: blur(10px);
         }
         
-        #searchInput::placeholder {
+        #searchInput::placeholder, #aiChatInput::placeholder {
             color: #a0a0a0;
         }
         
-        #searchInput:focus {
+        #searchInput:focus, #aiChatInput:focus {
             border-color: #ff6b35;
             box-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
             background: rgba(255, 255, 255, 0.15);
         }
         
-        .search-btn {
+        .search-btn, .ai-btn {
             position: absolute;
             right: 10px;
             top: 50%;
@@ -134,9 +157,138 @@
             transition: all 0.3s ease;
         }
         
-        .search-btn:hover {
+        .search-btn:hover, .ai-btn:hover {
             transform: translateY(-50%) scale(1.05);
             box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Aries AI Stilleri */
+        .ai-tools-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px;
+        }
+
+        .ai-tool-card {
+            background: linear-gradient(135deg, rgba(30, 74, 143, 0.1), rgba(46, 139, 87, 0.1));
+            border: 2px solid rgba(218, 165, 32, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .ai-tool-card:hover {
+            border-color: #daa520;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(218, 165, 32, 0.3);
+        }
+
+        .ai-status-card {
+            background: linear-gradient(135deg, #2e8b57, #1e4a8f);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .ai-btn {
+            background: linear-gradient(45deg, #daa520, #1e4a8f);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .ai-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
+        }
+
+        .ai-results {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #daa520;
+        }
+
+        .chat-container {
+            margin-top: 15px;
+        }
+
+        .chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #daa520;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .confidence-meter {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .confidence-level {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #1dd1a1);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff8e53;
+            font-weight: bold;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .input-group textarea {
+            height: 80px;
+            resize: vertical;
         }
         
         /* Suggestions */
@@ -277,15 +429,22 @@
             
             .nav-links {
                 gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
             .hero-section {
                 padding: 40px 20px 20px;
             }
             
-            #searchInput {
+            #searchInput, #aiChatInput {
                 padding: 15px 50px 15px 20px;
                 font-size: 16px;
+            }
+
+            .ai-tools-container {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
             }
         }
         
@@ -315,36 +474,151 @@
                 <div class="logo-text">Braver Explorer</div>
             </div>
             <nav class="nav-links">
-                <a href="#">Arama</a>
-                <a href="#">Görseller</a>
-                <a href="#">Haberler</a>
-                <a href="#">Haritalar</a>
-                <a href="#">Daha Fazla</a>
+                <a href="#" onclick="showSection('search')" class="active">Arama</a>
+                <a href="#" onclick="showSection('ai')">Aries AI</a>
+                <a href="#" onclick="showSection('images')">Görseller</a>
+                <a href="#" onclick="showSection('news')">Haberler</a>
+                <a href="#" onclick="showSection('maps')">Haritalar</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="hero-section">
-            <div class="search-container">
-                <div class="tagline">"Keşfetmek Cesaret İster"</div>
+        <!-- Ana Arama Bölümü -->
+        <section id="search-section" class="section active">
+            <div class="hero-section">
+                <div class="search-container">
+                    <div class="tagline">"Keşfetmek Cesaret İster"</div>
+                    
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Braver Explorer'da keşfet...">
+                        <button class="search-btn" onclick="performSearch()">
+                            <span class="ram-icon">Ara</span>
+                        </button>
+                        <div class="suggestions" id="suggestions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="results-container" id="resultsContainer">
+                    <!-- Arama sonuçları buraya gelecek -->
+                </div>
                 
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Braver Explorer'da keşfet...">
-                    <button class="search-btn" onclick="performSearch()">
-                        <span class="ram-icon">Ara</span>
+                <div class="pagination" id="pagination" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Aries AI Bölümü -->
+        <section id="ai-section" class="section">
+            <div class="hero-section">
+                <h2>🤖 Aries AI - Akıllı Mühendislik Asistanı</h2>
+                <div class="tagline">Yapay Zeka Destekli Harita ve Koordinat Çözümleri</div>
+            </div>
+
+            <div class="ai-tools-container">
+                <!-- AI Health Status -->
+                <div class="ai-status-card">
+                    <h3>🟢 Aries AI Aktif</h3>
+                    <div class="status-info">
+                        <p><strong>Model:</strong> Aries AI Engine v1.0</p>
+                        <p><strong>Capabilities:</strong> Coordinate Prediction, Geodetic Analysis, AI Chat</p>
+                        <p><strong>Response Time:</strong> &lt;2s</p>
+                    </div>
+                </div>
+
+                <!-- Koordinat Kestirimi -->
+                <div class="ai-tool-card">
+                    <h3>📍 Akıllı Koordinat Kestirimi</h3>
+                    <div class="input-group">
+                        <label>Kısmi Koordinat Verileri:</label>
+                        <input type="text" id="partialLat" placeholder="Enlem (örn: 39.93)">
+                        <input type="text" id="partialLng" placeholder="Boylam (örn: 32.85)">
+                    </div>
+                    <button class="ai-btn" onclick="predictCoordinates()">
+                        🧠 AI ile Koordinat Kestir
                     </button>
-                    <div class="suggestions" id="suggestions"></div>
+                    <div id="coordinatePredictionResults" class="ai-results"></div>
+                </div>
+
+                <!-- Parametre Optimizasyonu -->
+                <div class="ai-tool-card">
+                    <h3>📐 Jeodezik Parametre Kestirimi</h3>
+                    <div class="input-group">
+                        <label>Ölçüm Veri Tipi:</label>
+                        <select id="surveyType">
+                            <option value="gnss">GNSS Ölçümleri</option>
+                            <option value="total-station">Total Station</option>
+                            <option value="leveling">Nivelman</option>
+                        </select>
+                    </div>
+                    <button class="ai-btn" onclick="estimateParameters()">
+                        ⚡ Parametreleri Kestir
+                    </button>
+                    <div id="parameterResults" class="ai-results"></div>
+                </div>
+
+                <!-- Koordinat Dönüşümü -->
+                <div class="ai-tool-card">
+                    <h3>🔄 Koordinat Dönüşümü</h3>
+                    <div class="input-group">
+                        <label>Kaynak Sistem:</label>
+                        <select id="fromSystem">
+                            <option value="wgs84">WGS84</option>
+                            <option value="itrf96">ITRF96</option>
+                            <option value="ed50">ED50</option>
+                        </select>
+                        <label>Hedef Sistem:</label>
+                        <select id="toSystem">
+                            <option value="itrf96">ITRF96</option>
+                            <option value="wgs84">WGS84</option>
+                            <option value="utm">UTM</option>
+                        </select>
+                    </div>
+                    <button class="ai-btn" onclick="transformCoordinates()">
+                        🔄 Koordinatları Dönüştür
+                    </button>
+                    <div id="transformationResults" class="ai-results"></div>
+                </div>
+
+                <!-- AI Chat -->
+                <div class="ai-tool-card">
+                    <h3>💬 Mühendislik Asistanı</h3>
+                    <div class="chat-container">
+                        <div id="chatMessages" class="chat-messages">
+                            <div class="chat-message ai">
+                                <strong>🤖 Aries AI:</strong> Merhaba! Harita mühendisliği ve koordinat sistemleri konusunda size nasıl yardımcı olabilirim?
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="aiChatInput" placeholder="Harita mühendisliği sorusu sorun...">
+                            <button class="ai-btn" onclick="sendMessage()" style="position: relative; width: auto;">Gönder</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="results-section">
-            <div class="results-container" id="resultsContainer">
-                <!-- Arama sonuçları buraya gelecek -->
+        <!-- Diğer bölümler (Görseller, Haberler, Haritalar) -->
+        <section id="images-section" class="section">
+            <div class="hero-section">
+                <h2>🖼️ Görsel Arama</h2>
+                <div class="tagline">Binlerce görsel arasında keşfe çıkın</div>
             </div>
-            
-            <div class="pagination" id="pagination" style="display: none;"></div>
+        </section>
+
+        <section id="news-section" class="section">
+            <div class="hero-section">
+                <h2>📰 Haber Arama</h2>
+                <div class="tagline">Güncel haberleri takip edin</div>
+            </div>
+        </section>
+
+        <section id="maps-section" class="section">
+            <div class="hero-section">
+                <h2>🗺️ Harita Arama</h2>
+                <div class="tagline">Yeni yerler keşfedin</div>
+            </div>
         </section>
     </main>
 
@@ -359,13 +633,21 @@
                 this.currentPage = 1;
                 this.currentQuery = '';
                 this.searchHistory = JSON.parse(localStorage.getItem('braverSearchHistory')) || [];
+                this.currentSection = 'search';
                 this.init();
             }
             
             init() {
+                this.initializeEventListeners();
+                this.showSection('search');
+                this.showSearchHistory();
+            }
+            
+            initializeEventListeners() {
                 const searchInput = document.getElementById('searchInput');
+                const aiChatInput = document.getElementById('aiChatInput');
                 
-                // Debounced input
+                // Debounced input for main search
                 let timeout;
                 searchInput.addEventListener('input', (e) => {
                     clearTimeout(timeout);
@@ -374,15 +656,36 @@
                     }, 250);
                 });
                 
-                // Enter tuşu
+                // Enter key for search
                 searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        this.performSearch();
-                    }
+                    if (e.key === 'Enter') this.performSearch();
+                });
+
+                // Enter key for AI chat
+                aiChatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            }
+
+            // Section Management
+            showSection(sectionName) {
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
                 });
                 
-                // Search history'dan öneriler
-                this.showSearchHistory();
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Show selected section
+                document.getElementById(`${sectionName}-section`).classList.add('active');
+                
+                // Add active class to clicked nav link
+                event.target.classList.add('active');
+                
+                this.currentSection = sectionName;
             }
             
             async handleInput(query) {
@@ -538,7 +841,7 @@
                                 <span class="ram-icon">🐏</span>
                                 ${this.formatUrl(result.url)}
                             </div>
-                            <a href="${result.url}" class="result-title">${result.title}</a>
+                            <a href="${result.url}" class="result-title" target="_blank">${result.title}</a>
                             <div class="result-snippet">${this.generateSnippet(result.content, data.query)}</div>
                         </div>
                     `).join('')}
@@ -631,15 +934,211 @@
                 pagination.style.display = 'flex';
             }
         }
-        
-        // Uygulamayı başlat
+
+        // Aries AI İstemcisi
+        class AriesAIClient {
+            constructor() {
+                this.API_BASE = '/api/aries-ai';
+            }
+
+            // Koordinat Kestirimi
+            async predictCoordinates() {
+                const lat = document.getElementById('partialLat').value;
+                const lng = document.getElementById('partialLng').value;
+
+                if (!lat && !lng) {
+                    alert('Lütfen en az bir koordinat değeri girin');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/predict-coordinates`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            partialData: {
+                                lat: lat ? parseFloat(lat) : null,
+                                lng: lng ? parseFloat(lng) : null,
+                                accuracy: 0.8,
+                                confidence: 0.9
+                            }
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.displayCoordinatePrediction(result);
+                } catch (error) {
+                    console.error('Koordinat kestirim hatası:', error);
+                    alert('AI kestirim hatası: ' + error.message);
+                }
+            }
+
+            // Parametre Kestirimi
+            async estimateParameters() {
+                const surveyType = document.getElementById('surveyType').value;
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/estimate-parameters`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            surveyData: { type: surveyType }
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.displayParameterEstimation(result);
+                } catch (error) {
+                    console.error('Parametre kestirim hatası:', error);
+                    alert('Parametre kestirim hatası: ' + error.message);
+                }
+            }
+
+            // Koordinat Dönüşümü
+            async transformCoordinates() {
+                const fromSystem = document.getElementById('fromSystem').value;
+                const toSystem = document.getElementById('toSystem').value;
+
+                // Demo koordinatlar
+                const demoCoords = { lat: 39.9334, lng: 32.8597 };
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/transform-coordinates`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            coordinates: demoCoords,
+                            fromSystem: fromSystem,
+                            toSystem: toSystem
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.displayTransformation(result);
+                } catch (error) {
+                    console.error('Dönüşüm hatası:', error);
+                    alert('Koordinat dönüşüm hatası: ' + error.message);
+                }
+            }
+
+            // AI Sohbet
+            async sendMessage() {
+                const input = document.getElementById('aiChatInput');
+                const message = input.value.trim();
+
+                if (!message) return;
+
+                this.addChatMessage('user', message);
+                input.value = '';
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: message,
+                            context: 'geospatial'
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.addChatMessage('ai', result.response);
+                } catch (error) {
+                    console.error('Chat hatası:', error);
+                    this.addChatMessage('ai', 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+                }
+            }
+
+            // Sonuçları Görüntüleme
+            displayCoordinatePrediction(result) {
+                const container = document.getElementById('coordinatePredictionResults');
+                container.innerHTML = `
+                    <div class="ai-result">
+                        <h4>🧠 AI Kestirim Sonuçları</h4>
+                        <p><strong>Tahmini Koordinat:</strong> 
+                           ${result.predicted.lat.toFixed(6)}, ${result.predicted.lng.toFixed(6)}</p>
+                        <p><strong>Güven Seviyesi:</strong> ${(result.confidence * 100).toFixed(1)}%</p>
+                        <div class="confidence-meter">
+                            <div class="confidence-level" style="width: ${result.confidence * 100}%"></div>
+                        </div>
+                        <p><strong>Hata Marjı:</strong> ${result.marginOfError}</p>
+                        <p><strong>Metodoloji:</strong> ${result.methodology}</p>
+                        <p><strong>AI Model:</strong> ${result.ai_model}</p>
+                    </div>
+                `;
+            }
+
+            displayParameterEstimation(result) {
+                const container = document.getElementById('parameterResults');
+                container.innerHTML = `
+                    <div class="ai-result">
+                        <h4>📐 Jeodezik Parametre Kestirimi</h4>
+                        ${Object.entries(result.estimated_parameters).map(([key, value]) => `
+                            <p><strong>${key}:</strong> ${JSON.stringify(value)}</p>
+                        `).join('')}
+                        <p><strong>Belirsizlik:</strong> ${result.uncertainty.overall_confidence}</p>
+                        <p><strong>AI Önerileri:</strong> ${result.ai_recommendations.join(', ')}</p>
+                    </div>
+                `;
+            }
+
+            displayTransformation(result) {
+                const container = document.getElementById('transformationResults');
+                container.innerHTML = `
+                    <div class="ai-result">
+                        <h4>🔄 Koordinat Dönüşümü</h4>
+                        <p><strong>Orijinal:</strong> 
+                           ${result.original.coords.lat}, ${result.original.coords.lng} (${result.original.system})</p>
+                        <p><strong>Dönüştürülmüş:</strong> 
+                           ${result.transformed.coords.lat.toFixed(6)}, ${result.transformed.coords.lng.toFixed(6)} (${result.transformed.system})</p>
+                        <p><strong>Doğruluk:</strong> ${result.accuracy}</p>
+                        <p><strong>Model:</strong> ${result.transformation_model}</p>
+                        <p><strong>AI Notları:</strong> ${result.ai_notes}</p>
+                    </div>
+                `;
+            }
+
+            addChatMessage(sender, message) {
+                const container = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${sender}`;
+                messageDiv.innerHTML = `
+                    <strong>${sender === 'user' ? '👤 Siz' : '🤖 Aries AI'}:</strong> ${message}
+                `;
+                container.appendChild(messageDiv);
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Global instances
         const braverExplorer = new BraverExplorer();
-        
-        // Global fonksiyon
+        const ariesAI = new AriesAIClient();
+
+        // Global fonksiyonlar
+        function showSection(sectionName) {
+            braverExplorer.showSection(sectionName);
+        }
+
         function performSearch() {
             braverExplorer.performSearch();
         }
-        
+
+        function predictCoordinates() {
+            ariesAI.predictCoordinates();
+        }
+
+        function estimateParameters() {
+            ariesAI.estimateParameters();
+        }
+
+        function transformCoordinates() {
+            ariesAI.transformCoordinates();
+        }
+
+        function sendMessage() {
+            ariesAI.sendMessage();
+        }
+
         // Sayfa yüklendiğinde input'a odaklan
         window.addEventListener('load', () => {
             document.getElementById('searchInput').focus();

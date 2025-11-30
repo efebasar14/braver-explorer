@@ -4,6 +4,7 @@ class BraverExplorer {
         this.currentQuery = '';
         this.searchHistory = JSON.parse(localStorage.getItem('braverSearchHistory')) || [];
         this.currentSection = 'search';
+        this.API_BASE = 'http://localhost:3000/api'; // Backend API base URL
         this.init();
     }
     
@@ -75,10 +76,11 @@ class BraverExplorer {
         }
         
         try {
-            const response = await fetch(`/api/suggest?q=${encodeURIComponent(query)}`);
+            const response = await fetch(`${this.API_BASE}/suggest?q=${encodeURIComponent(query)}`);
             const data = await response.json();
             this.showSuggestions(data.suggestions || []);
         } catch (error) {
+            console.log('Öneri API hatası, local öneriler kullanılıyor:', error);
             this.showLocalSuggestions(query);
         }
     }
@@ -167,7 +169,7 @@ class BraverExplorer {
                 </div>
             `;
             
-            const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&page=${page}`);
+            const response = await fetch(`${this.API_BASE}/search?q=${encodeURIComponent(query)}&page=${page}`);
             const data = await response.json();
             
             this.displayResults(data);
@@ -177,52 +179,52 @@ class BraverExplorer {
         }
     }
     
-    performImageSearch() {
+    async performImageSearch() {
         const query = document.getElementById('imageSearchInput').value.trim();
         if (!query) return;
         
         this.addToSearchHistory(query);
-        document.getElementById('imagesResults').innerHTML = `
-            <div class="placeholder-content">
-                <h3>🐏 "${query}" için Görsel Arama</h3>
-                <p>Görsel arama backend entegrasyonu aktif değil. Gerçek görsel arama için backend API'si gerekiyor.</p>
-                <div style="margin-top: 20px;">
-                    <strong>Demo Görseller:</strong>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;">
-                        ${Array.from({length: 6}, (_, i) => `
-                            <div style="background: rgba(255,107,53,0.1); padding: 20px; border-radius: 10px; text-align: center;">
-                                🖼️ Görsel ${i + 1}
-                            </div>
-                        `).join('')}
-                    </div>
+        
+        try {
+            document.getElementById('imagesResults').innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #a0a0a0;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🐏</div>
+                    <div>"${query}" görselleri aranıyor...</div>
                 </div>
-            </div>
-        `;
+            `;
+            
+            const response = await fetch(`${this.API_BASE}/images?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            this.displayImageResults(data);
+        } catch (error) {
+            console.error('Görsel arama hatası:', error);
+            this.showDemoImages(query);
+        }
     }
     
-    performNewsSearch() {
+    async performNewsSearch() {
         const query = document.getElementById('newsSearchInput').value.trim();
         if (!query) return;
         
         this.addToSearchHistory(query);
-        document.getElementById('newsResults').innerHTML = `
-            <div class="placeholder-content">
-                <h3>🐏 "${query}" için Haber Arama</h3>
-                <p>Haber arama backend entegrasyonu aktif değil. Gerçek haber arama için haber API'si gerekiyor.</p>
-                <div style="margin-top: 20px;">
-                    <strong>Demo Haberler:</strong>
-                    <div style="text-align: left; max-width: 600px; margin: 20px auto;">
-                        ${Array.from({length: 3}, (_, i) => `
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; margin: 10px 0; border-radius: 10px;">
-                                <h4>${query} ile ilgili haber ${i + 1}</h4>
-                                <p>Bu haber içeriği backend entegrasyonu ile gerçek verilerle doldurulacak.</p>
-                                <small style="color: #ff8e53;">Kaynak: Braver Explorer Haberler</small>
-                            </div>
-                        `).join('')}
-                    </div>
+        
+        try {
+            document.getElementById('newsResults').innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #a0a0a0;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🐏</div>
+                    <div>"${query}" haberleri aranıyor...</div>
                 </div>
-            </div>
-        `;
+            `;
+            
+            const response = await fetch(`${this.API_BASE}/news?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            this.displayNewsResults(data);
+        } catch (error) {
+            console.error('Haber arama hatası:', error);
+            this.showDemoNews(query);
+        }
     }
     
     performMapsSearch() {
@@ -281,7 +283,7 @@ class BraverExplorer {
                         <span class="ram-icon">🐏</span>
                         ${this.formatUrl(result.url)}
                     </div>
-                    <a href="${result.url}" class="result-title">${result.title}</a>
+                    <a href="${result.url}" class="result-title" target="_blank">${result.title}</a>
                     <div class="result-snippet">${this.generateSnippet(result.content, data.query)}</div>
                 </div>
             `).join('')}
@@ -289,6 +291,78 @@ class BraverExplorer {
         
         container.innerHTML = resultsHTML;
         this.showPagination(data.total, this.currentPage);
+    }
+    
+    displayImageResults(data) {
+        const container = document.getElementById('imagesResults');
+        
+        if (!data.images || data.images.length === 0) {
+            container.innerHTML = `
+                <div class="placeholder-content">
+                    <h3>🐏 "${data.query}" için görsel bulunamadı</h3>
+                    <p>Farklı anahtar kelimelerle tekrar deneyin.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const imagesHTML = `
+            <div class="result-stats">
+                "${data.query}" için ${data.total} görsel bulundu
+            </div>
+            <div class="image-grid">
+                ${data.images.map((image, index) => `
+                    <div class="image-item fade-in" style="animation-delay: ${index * 0.1}s">
+                        <a href="${image.link}" target="_blank">
+                            <img src="${image.thumbnail}" alt="${image.title}" 
+                                 onerror="this.src='https://picsum.photos/200/150?random=${index}'">
+                        </a>
+                        <div class="image-info">
+                            <div class="image-title">${image.title}</div>
+                            <div class="image-source">Kaynak: ${image.source}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        container.innerHTML = imagesHTML;
+    }
+    
+    displayNewsResults(data) {
+        const container = document.getElementById('newsResults');
+        
+        if (!data.news || data.news.length === 0) {
+            container.innerHTML = `
+                <div class="placeholder-content">
+                    <h3>🐏 "${data.query}" için haber bulunamadı</h3>
+                    <p>Farklı anahtar kelimelerle tekrar deneyin.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const newsHTML = `
+            <div class="result-stats">
+                "${data.query}" için ${data.total} haber bulundu
+            </div>
+            <div class="news-list">
+                ${data.news.map((news, index) => `
+                    <div class="news-item fade-in" style="animation-delay: ${index * 0.1}s">
+                        <div class="news-header">
+                            <a href="${news.url}" class="news-title" target="_blank">${news.title}</a>
+                            <div class="news-source">${news.source} • ${this.formatDate(news.publishedAt)}</div>
+                        </div>
+                        <div class="news-content">
+                            ${news.image ? `<img src="${news.image}" alt="${news.title}" class="news-image">` : ''}
+                            <div class="news-description">${news.description}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        container.innerHTML = newsHTML;
     }
     
     showDemoResults(query, page) {
@@ -317,6 +391,42 @@ class BraverExplorer {
         this.displayResults(demoResults);
     }
     
+    showDemoImages(query) {
+        const demoImages = {
+            query: query,
+            images: Array.from({ length: 8 }, (_, i) => ({
+                id: i + 1,
+                url: `https://picsum.photos/800/600?random=${i}`,
+                thumbnail: `https://picsum.photos/200/150?random=${i}`,
+                title: `${query} görseli ${i + 1}`,
+                source: 'Braver Explorer',
+                photographer: 'Demo',
+                link: '#'
+            })),
+            total: 8
+        };
+        
+        this.displayImageResults(demoImages);
+    }
+    
+    showDemoNews(query) {
+        const demoNews = {
+            query: query,
+            news: Array.from({ length: 5 }, (_, i) => ({
+                id: `news-${i + 1}`,
+                title: `${query} ile ilgili haber ${i + 1}`,
+                description: `Braver Explorer haber servisi şu anda demo modunda. ${query} hakkında gerçek haberler için backend entegrasyonu gerekli.`,
+                url: '#',
+                image: `https://picsum.photos/400/200?random=${i + 100}`,
+                source: 'Braver Explorer Haber',
+                publishedAt: new Date().toISOString()
+            })),
+            total: 5
+        };
+        
+        this.displayNewsResults(demoNews);
+    }
+    
     formatUrl(url) {
         try {
             const urlObj = new URL(url);
@@ -324,6 +434,15 @@ class BraverExplorer {
         } catch {
             return url;
         }
+    }
+    
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('tr-TR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     }
     
     generateSnippet(content, query) {
